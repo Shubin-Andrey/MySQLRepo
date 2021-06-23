@@ -1,0 +1,11 @@
+8.(по желанию) Подсчитайте произведение чисел в столбце таблицы.
+CREATE TEMPORARY TABLE my_char (m_char INT);
+INSERT INTO my_char(m_char) VALUES ('1'), ('2'), ('3'), ('4'), ('5');
+SELECT * FROM my_char;
+1
+2
+3
+4
+5
+SELECT ROUND(EXP(SUM(LN(m_char)))) AS summa FROM my_char; 
+120.0
