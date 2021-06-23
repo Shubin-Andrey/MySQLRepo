@@ -1,0 +1,130 @@
+1.Повторить все действия по доработке БД vk.
+
+CREATE TABLE user_statuses (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор строки", 
+  name VARCHAR(100) NOT NULL COMMENT "Название статуса (уникально)",
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",  
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"
+) COMMENT "Справочник статусов пользователей";  
+
+UPDATE profiles SET status = NULL;
+
+ALTER TABLE profiles RENAME COLUMN status TO status_id;
+
+DESC profiles;
+
+user_id	        int     unsigned	NO	PRI		
+gender	char(1)	NO			
+birthday	date	YES			
+photo_id	int     unsigned	YES			
+status_id	varchar(30)	YES			
+city_id	int unsigned	YES	
+
+Скопировал это из ДБ, кривовато получилось.(больше не буду копировать информацию из ДБ) 	
+
+ALTER TABLE profiles MODIFY COLUMN status_id INT UNSIGNED;	
+DESC profiles;
+
+birthday	date	YES			
+photo_id	int unsigned	YES			
+status_id	int unsigned	YES			
+city_id	int unsigned	YES		
+
+
+CREATE TABLE users_media (
+  user_id INT UNSIGNED NOT NULL COMMENT "Ссылка на пользователя",
+  media_id INT UNSIGNED NOT NULL COMMENT "Ссылка на медиа-файл",
+  is_photo BOOLEAN NOT NULL DEFAULT false ,	
+  PRIMARY KEY (user_id, media_id) COMMENT "Составной первичный ключ"
+) COMMENT "Принадлежность файла пользователю"
+
+
+2.Заполнить новые таблицы. / 3.Повторить все действия CRUD.
+
+UPDATE city SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE communities SET updated_at = NOW() WHERE updated_at < created_at;
+
+UPDATE country SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE friendship SET updated_at = NOW() WHERE updated_at < created_at;
+
+и.т.д.(Очень много строчек, не хочу захламлять документ)
+
+UPDATE profiles SET photo_id = FLOOR(1 + RAND() * 100);	
+
+UPDATE profiles SET photo_id = FLOOR(1 + RAND() * 100);
+
+UPDATE communities SET media_id = FLOOR(1 + RAND() * 100);
+
+UPDATE communities_users SET user_id = FLOOR(1 + RAND() * 100);
+
+UPDATE profiles SET photo_id = FLOOR(1 + RAND() * 100);
+
+и.т.д.
+
+CREATE TEMPORARY TABLE genders (name CHAR(1));
+
+INSERT INTO genders VALUES ('m'), ('f'); 
+
+UPDATE profiles 
+  SET gender = (SELECT name FROM genders ORDER BY RAND() LIMIT 1);
+
+TRUNCATE media_types;
+
+INSERT INTO media_types (name) VALUES
+  ('photo'),
+  ('video'),
+  ('audio')
+;
+
+UPDATE media SET media_type_id = FLOOR(1 + RAND() * 3);
+UPDATE media SET user_id = FLOOR(1 + RAND() * 100);
+
+CREATE TEMPORARY TABLE extensions (name VARCHAR(10));
+
+INSERT INTO extensions VALUES ('jpeg'), ('avi'), ('mpeg'), ('png');
+
+UPDATE media SET filename = CONCAT(
+  'http://dropbox.net/vk/',
+  filename,
+  (SELECT last_name FROM users ORDER BY RAND() LIMIT 1),
+  '.',
+  (SELECT name FROM extensions ORDER BY RAND() LIMIT 1)
+);
+
+UPDATE media SET size = FLOOR(10000 + (RAND() * 1000000)) WHERE size < 1000;
+
+UPDATE media SET metadata = CONCAT('{"owner":"', 
+  (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = user_id),
+  '"}');  
+
+ALTER TABLE media MODIFY COLUMN metadata JSON;
+
+DESC friendship;
+RENAME TABLE friendship TO friendships;
+
+UPDATE friendship SET 
+  user_id = FLOOR(1 + RAND() * 100),
+  friend_id = FLOOR(1 + RAND() * 100);
+
+UPDATE friendship SET friend_id = friend_id + 1 WHERE user_id = friend_id;
+ 
+TRUNCATE friendship_statuses;
+
+INSERT INTO friendship_statuses (name) VALUES
+  ('Requested'),
+  ('Confirmed'),
+  ('Rejected');
+ 
+UPDATE friendships SET status_id = FLOOR(1 + RAND() * 3); 
+
+DELETE FROM communities WHERE id > 30;
+
+
+
+
+4. Подобрать сервис-образец для курсовой работы.
+
+Для курсовой работы буду создавать БД "База Данных Металлообрабатывающего предприятия" (ЕСТД, ЕСКД, Маршрутные паспорта, Сотрудники итд )
+
+На производстве, где сейчас работаю отсутствует, от слова СОВСЕМ, БД(даже 1С нет). Всвязи с чем с документооборотом полный бардак. 
+Хочу сделать действительно нужную и полезную БД.

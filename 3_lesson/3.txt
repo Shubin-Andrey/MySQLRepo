@@ -1,0 +1,125 @@
+1 Проанализировать структуру БД vk, которую мы создали на занятии, и внести предложения по усовершенствованию (если такие идеи есть). 
+Напишите пожалуйста, всё-ли понятно по структуре.
+
+В скрипте перед каждым созданием таблиц вставил DROP TABLE IF EXISTS. Чтобы удобнее было работать со скриптом
+
+Создал таблицы городов и стран, дабы устранить повторения
+DROP TABLE IF EXISTS city;
+CREATE TABLE city (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор сроки",
+  name VARCHAR(150) NOT NULL UNIQUE COMMENT "Название города",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",  
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"  
+) COMMENT "Города";
+
+DROP TABLE IF EXISTS country;
+CREATE TABLE country (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор сроки",
+  name VARCHAR(150) NOT NULL UNIQUE COMMENT "Название страны",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",  
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"  
+) COMMENT "Города";
+
+В таблице сообщений добавил : is_read BOOLEAN COMMENT "Признак прочтенности"
+
+В таблицах сообщений, пользователей и групп добавил ссылку на медиафайлы:
+media_id INT UNSIGNED NULL COMMENT "Ссылка на медиафайлы",
+
+
+В структуре все основное понятно.(На мой предвзятый взгляд)
+
+2 Добавить необходимую таблицу/таблицы для того, чтобы можно было использовать лайки для медиафайлов, постов и пользователей.
+
+-- Таблица лайков
+DROP TABLE IF EXISTS likee;
+CREATE TABLE likee (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор строки",
+  user_id INT UNSIGNED NOT NULL COMMENT "Ссылка на пользователя, который поставил лайк",
+  user_id INT UNSIGNED COMMENT "Ссылка на пользователя, которому поставили лайк",
+  media_id INT UNSIGNED COMMENT "Ссылка на медиа, которому поставили лайк",
+  messages_id INT UNSIGNED COMMENT "Ссылка на сообщение, которому поставили лайк",
+  likee_type_id INT UNSIGNED NULL COMMENT "Ссылка на тип лайка",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"
+) COMMENT "Лайки";
+
+-- Таблица типов лайков
+DROP TABLE IF EXISTS likee_types;
+CREATE TABLE likee_types (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор строки",
+  name VARCHAR(255) NOT NULL UNIQUE COMMENT "Тип лайка",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",  
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"
+) COMMENT "Типы лайков";
+
+
+3 Используя сервис http://filldb.info или другой по вашему желанию, сгенерировать тестовые данные для всех таблиц, учитывая логику связей. 
+Для всех таблиц, где это имеет смысл, создать не менее 100 строк. Создать локально БД vk и загрузить в неё тестовые данные.
+
+Я в filldb не вписал про создание БД, поэтому и дамп у меня корявенький, пришлось вручную вписывать CREATE DATABASE в полученный фаил,
+ф так все вышло и даже без глюков
+
+#
+# TABLE STRUCTURE FOR: city
+#
+
+DROP TABLE IF EXISTS `city`;
+
+CREATE TABLE `city` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (1, 'Jackyport', '1981-12-27 23:47:29', '1994-02-09 05:25:22');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (2, 'Huelbury', '1989-04-17 01:23:38', '2008-09-30 17:33:14');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (3, 'Rudolphmouth', '1979-07-18 08:19:32', '1988-11-21 06:55:47');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (4, 'Faybury', '2019-05-31 18:09:46', '1970-03-12 23:47:25');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (5, 'Deckowborough', '1992-07-06 14:35:13', '1989-05-30 17:56:40');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (6, 'North Darwinland', '2000-06-02 17:00:29', '1982-11-08 05:49:35');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (7, 'New Tara', '1980-08-03 17:37:47', '2000-01-19 14:39:00');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (8, 'Murazikshire', '1974-06-20 05:28:00', '2006-09-04 17:11:58');
+INSERT INTO `city` (`id`, `name`, `created_at`, `updated_at`) VALUES (9, 'Lake Laceyberg', '1976-01-27 23:43:02', '1984-02-11 10:05:18');
+
+
+еще немного
+
+#
+# TABLE STRUCTURE FOR: likee
+#
+
+DROP TABLE IF EXISTS `likee`;
+
+CREATE TABLE `likee` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_out_id` int(10) unsigned NOT NULL,
+  `user_in_id` int(10) unsigned DEFAULT NULL,
+  `media_id` int(10) unsigned DEFAULT NULL,
+  `messages_id` int(10) unsigned DEFAULT NULL,
+  `likee_type_id` int(10) unsigned NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (1, 1, 1, 101, 1, 1, '2001-07-27 23:00:06', '1995-04-23 07:27:12');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (2, 2, 2, 102, 2, 2, '1986-11-21 12:02:16', '1981-08-18 03:33:55');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (3, 3, 3, 103, 3, 3, '1991-01-10 12:06:24', '2004-10-12 17:58:49');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (4, 4, 4, 104, 4, 4, '1971-02-19 08:02:16', '1980-04-08 16:51:55');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (5, 5, 5, 105, 5, 5, '2019-07-26 11:16:54', '1989-06-02 06:05:25');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (6, 6, 6, 106, 6, 6, '1976-01-25 02:23:40', '1979-09-05 17:06:02');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (7, 7, 7, 107, 7, 7, '2012-01-16 11:35:55', '2014-12-04 16:32:51');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (8, 8, 8, 108, 8, 8, '1981-02-20 08:00:16', '1979-07-20 16:02:50');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (9, 9, 9, 109, 9, 9, '1984-01-13 05:06:16', '1970-04-25 06:43:15');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (10, 10, 10, 110, 10, 10, '1973-06-04 00:22:01', '1985-02-28 18:11:01');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (11, 11, 11, 111, 11, 11, '1976-03-21 18:22:33', '1986-06-16 21:59:59');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (12, 12, 12, 112, 12, 12, '1999-01-09 19:54:00', '2009-09-15 09:50:12');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `created_at`, `updated_at`) VALUES (13, 13, 13, 113, 13, 13, '1995-08-05 21:08:02', '1975-05-07 06:47:22');
+INSERT INTO `likee` (`id`, `user_out_id`, `user_in_id`, `media_id`, `messages_id`, `likee_type_id`, `
+
+
+
+
