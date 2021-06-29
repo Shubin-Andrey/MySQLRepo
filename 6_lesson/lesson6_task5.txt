@@ -1,0 +1,13 @@
+-- 5. Найти 10 пользователей, которые проявляют наименьшую активность в
+-- использовании социальной сети
+-- (критерии активности необходимо определить самостоятельно).
+
+По мне как критериями активности может выступать колличество сообщений и лайков от пользователя за последнее время.
+
+SELECT id, first_name, last_name FROM users WHERE id IN (SELECT from_user_id FROM messages WHERE (SELECT TIMESTAMPDIFF(DAY, updated_at, NOW()) < 7 )) 
+UNION
+SELECT id, first_name, last_name FROM users WHERE id IN (SELECT user_id FROM likes WHERE (SELECT TIMESTAMPDIFF(DAY, created_at, NOW()) < 7 ))
+ORDER BY id
+LIMIT 10;
+
+Так сделал потому что кто-то строчит тонну сообщений в день, а кто то лайкает фотки котиков.

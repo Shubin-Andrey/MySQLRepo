@@ -1,0 +1,262 @@
+2. Создать все необходимые внешние ключи и диаграмму отношений.
+
+Диаграмма отношений хранится в png файле Lesson6_task2.png
+
+ALTER TABLE profiles
+  ADD CONSTRAINT profiles_country_id_fk
+    FOREIGN KEY (country_id) REFERENCES country(id)
+      ON DELETE SET NULL;
+
+DESC profiles ;
+
+user_id		int unsigned	NO	PRI		
+gender		char(1)		NO			
+birthday	date		YES			
+photo_id	int unsigned	YES	MUL		
+status_id	int unsigned	YES			
+city_id		int unsigned	YES	MUL		
+country_id	int unsigned	YES	MUL		
+media_id	int unsigned	YES			
+created_at	datetime	YES		CURRENT_TIMESTAMP	DEFAULT_GENERATED
+updated_at	datetime	YES		CURRENT_TIMESTAMP	DEFAULT_GENERATED on update CURRENT_TIMESTAMP
+
+Это часть кода и данные с таблицы.
+
+-- Смотрим структуру таблицы
+DESC media ;
+
+-- Добавляем внешние ключи
+ALTER TABLE profiles
+  ADD CONSTRAINT profiles_user_id_fk 
+    FOREIGN KEY (user_id) REFERENCES users(id)
+      ON DELETE CASCADE;
+ 
+
+
+  CREATE TEMPORARY TABLE my_media (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор строки",
+  user_id INT UNSIGNED NOT NULL COMMENT "Ссылка на пользователя, который загрузил файл",
+  filename VARCHAR(255) NOT NULL COMMENT "Путь к файлу",
+  size INT NOT NULL COMMENT "Размер файла",
+  metadata JSON COMMENT "Метаданные файла",
+  media_type_id INT UNSIGNED NOT NULL COMMENT "Ссылка на тип контента",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"
+) COMMENT "Медиафайлы"; 
+
+INSERT INTO media (user_id,
+filename,
+size,
+metadata,
+media_type_id,
+created_at,
+updated_at) SELECT user_id,
+filename,
+size,
+metadata,
+media_type_id,
+created_at,
+updated_at FROM my_media LIMIT 100;
+
+SELECT * FROM media ;
+
+TRUNCATE media; 
+
+UPDATE profiles SET media_id = 1 + (RAND() * 80) WHERE media_id > 83;
+
+SELECT * FROM users_media ;
+     
+ALTER TABLE profiles     
+  ADD CONSTRAINT profiles_photo_id_fk
+    FOREIGN KEY (photo_id) REFERENCES media(id)
+      ON DELETE SET NULL;
+
+-- Изменяем тип столбца при необходимости
+ALTER TABLE profiles DROP FOREIGN KEY profiles_media_id_fk;
+ALTER TABLE profiles MODIFY COLUMN photo_id INT(10) UNSIGNED;
+      
+-- Для таблицы сообщений
+
+-- Смотрим структурв таблицы
+DESC profiles ;
+
+-- Добавляем внешние ключи
+ALTER TABLE messages
+  ADD CONSTRAINT messages_from_user_id_fk 
+    FOREIGN KEY (from_user_id) REFERENCES users(id),
+  ADD CONSTRAINT messages_to_user_id_fk 
+    FOREIGN KEY (to_user_id) REFERENCES users(id);
+   
+ALTER TABLE profiles
+  ADD CONSTRAINT profiles_country_id_fk
+    FOREIGN KEY (country_id) REFERENCES country(id)
+      ON DELETE SET NULL;
+  
+DESC profiles ;    
+     
+
+INSERT INTO users_media 
+  SELECT  
+    FLOOR(1 + (RAND() * 100)), 
+    FLOOR(1 + (RAND() * 100)),
+    FLOOR(1 + (RAND() * 1))
+ ;
+
+INSERT INTO users_media 
+  SELECT  
+    user_id , 
+    FLOOR(1 + (RAND() * 100)),
+    FLOOR(0)
+  FROM profiles 
+ ;
+
+-- UPDATE users us SET us.created_at = (SELECT usm.created_at FROM users_my usm WHERE usm.id=us.id);
+
+-- INSERT INTO users_media(user_id) SELECT media_id FROM profiles ;
+
+-- UPDATE profiles SET media_id = 1 + (RAND() * 80) WHERE media_id > 83;
+
+TRUNCATE users_media;
+
+ALTER TABLE profiles DROP FOREIGN KEY profiles_media_id_fk;
+DROP INDEX profiles_media_id_fk ON profiles;
+
+SELECT * FROM users_media;
+SELECT * FROM profiles;
+
+ALTER TABLE profiles
+  ADD CONSTRAINT profiles_media_id_fk
+    FOREIGN KEY (media_id) REFERENCES users_media(user_id)
+      ON DELETE SET NULL;
+ 
+     
+     -- затык
+DESC media;     
+ALTER TABLE media
+  ADD CONSTRAINT users_media_user_id_fk
+    FOREIGN KEY (user_id) REFERENCES users_media(media_id)
+      ON DELETE CASCADE;
+
+     
+ALTER TABLE profiles
+  ADD CONSTRAINT profiles_status_id_fk
+    FOREIGN KEY (status_id) REFERENCES user_statuses(id)
+      ON DELETE SET NULL;
+
+     
+     
+ALTER TABLE profiles
+  ADD CONSTRAINT profiles_user_id_fk 
+    FOREIGN KEY (user_id) REFERENCES users(id)
+      ON DELETE CASCADE,
+  ADD CONSTRAINT profiles_photo_id_fk
+    FOREIGN KEY (photo_id) REFERENCES media(id)
+      ON DELETE SET NULL;  
+     
+
+DESC media ;    
+ALTER TABLE media
+  ADD CONSTRAINT media_media_type_id_fk
+    FOREIGN KEY (media_type_id) REFERENCES media_types(id)
+      ON DELETE CASCADE;
+     
+ALTER TABLE communities_users DROP PRIMARY KEY messages_to_user_id_fk;
+ALTER TABLE communities_users MODIFY COLUMN user_id INT(10) UNSIGNED; 
+
+-- ALTER TABLE profiles 
+-- ADD Address VARCHAR(50) NULL;
+SELECT * FROM communities_users;
+     
+ CREATE TABLE communities_users_2 (
+  community_id INT UNSIGNED,
+  user_id INT UNSIGNED,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки"
+); 
+
+INSERT INTO communities_users_2 (community_id,
+user_id,
+created_at)
+SELECT 
+community_id,
+user_id,
+created_at
+FROM communities_users;
+
+SELECT * FROM communities_users_2;
+
+DROP TABLE communities_users;
+
+RENAME TABLE communities_users_2 TO communities_users;
+
+DESC communities_users ;    
+ALTER TABLE communities_users
+  ADD CONSTRAINT communities_users_user_id_fk
+    FOREIGN KEY (user_id) REFERENCES profiles(user_id)
+      ON DELETE SET NULL;
+ 
+-- затык  
+SELECT * FROM communities;
+UPDATE communities_users SET community_id = 1 + (RAND() * 29) WHERE community_id > 30;
+DESC communities_users ;    
+ALTER TABLE communities_users
+  ADD CONSTRAINT communities_users_community_id_fk
+    FOREIGN KEY (community_id) REFERENCES communities(id)
+      ON DELETE SET NULL;
+     
+
+ 
+     
+DESC posts ;    
+ALTER TABLE posts 
+  ADD CONSTRAINT posts_user_id_fk
+    FOREIGN KEY (user_id) REFERENCES users(id)
+      ON DELETE CASCADE;
+     
+DESC posts ;    
+ALTER TABLE posts 
+  ADD CONSTRAINT posts_community_id_fk
+    FOREIGN KEY (community_id) REFERENCES communities(id)
+      ON DELETE CASCADE;
+     
+DESC posts ;    
+ALTER TABLE posts 
+  ADD CONSTRAINT posts_media_id_fk
+    FOREIGN KEY (media_id) REFERENCES media(id)
+      ON DELETE CASCADE;
+ 
+     
+ 
+ALTER TABLE friendships 
+  ADD CONSTRAINT friendships_user_id_fk
+    FOREIGN KEY (user_id) REFERENCES users(id)
+      ; 
+ ALTER TABLE friendships    
+     ADD CONSTRAINT friendships_friend_id_fk
+    FOREIGN KEY (friend_id) REFERENCES users(id)
+      ;   
+     
+     
+     DESC friendships ;    
+ALTER TABLE friendships 
+  ADD CONSTRAINT friendships_status_id_fk
+    FOREIGN KEY (status_id) REFERENCES friendship_statuses(id)
+      ON DELETE CASCADE;
+     
+     
+DESC likes ;    
+ALTER TABLE likes 
+  ADD CONSTRAINT likes_user_id_fk
+    FOREIGN KEY (user_id) REFERENCES users(id)
+      ;
+     
+DESC likes ;    
+ALTER TABLE likes 
+  ADD CONSTRAINT likes_target_id_fk
+    FOREIGN KEY (target_id) REFERENCES users(id)
+      ;
+     
+DESC likes ;    
+ALTER TABLE likes 
+  ADD CONSTRAINT likes_target_type_id_fk
+    FOREIGN KEY (target_type_id) REFERENCES target_types(id)
+      ON DELETE CASCADE;

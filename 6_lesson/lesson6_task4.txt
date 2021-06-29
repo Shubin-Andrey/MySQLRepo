@@ -1,0 +1,6 @@
+ 4. Подсчитать количество лайков которые получили 10 самых молодых пользователей.
+
+SELECT (SELECT COUNT(target_id) FROM likes WHERE likes.target_id = profiles.user_id GROUP BY target_id) AS counter, 
+TIMESTAMPDIFF(YEAR, birthday, NOW()) AS age FROM profiles ORDER BY age LIMIT 10 ;
+
+-- вот тут у меня закончился мозг, чтоб подсчитать сумму значений в полученной таблице. WITH ROLLUP работать не захотел
