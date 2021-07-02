@@ -1,0 +1,57 @@
+(по желанию) Пусть имеется таблица рейсов flights (id, from, to) и таблица городов cities (label, name). 
+Поля from, to и label содержат английские названия городов, поле name — русское. 
+Выведите список рейсов flights с русскими названиями городов.
+
+DROP TABLE IF EXISTS flights;
+CREATE TABLE flights (
+  id SERIAL PRIMARY KEY,
+  from_ VARCHAR(255) COMMENT 'откуда',
+  to_ VARCHAR(255) COMMENT 'куда'
+)COMMENT 'полеты';
+
+DROP TABLE IF EXISTS cities;
+CREATE TABLE cities (
+  id SERIAL PRIMARY KEY,
+  label VARCHAR(255) COMMENT 'название на английском',
+  name VARCHAR(255) COMMENT 'название на русском'
+)COMMENT 'города';
+
+
+INSERT INTO flights (from_, to_) VALUES
+('moscow', 'muhosransk'),
+('muhosransk', 'new-york'),
+('new-york', 'malie-dubki')
+;
+
+
+INSERT INTO cities (label, name) VALUES
+('moscow', 'москва'),
+('muhosransk', 'мухосранск'),
+('new-york', 'нью-йорк'),
+('malie-dubki', 'малые дубки')
+;
+
+SELECT
+  cities_f.name AS from_
+FROM 
+flights AS f
+JOIN 
+cities AS cities_f
+ON f.from_ = cities_f.label;
+
+
+
+SELECT
+cities_f.name AS from_,
+cities_t.name AS to_
+FROM 
+flights AS f
+JOIN 
+cities AS cities_f
+ON f.from_ = cities_f.label
+	JOIN 
+	cities AS cities_t
+	ON f.to_ = cities_t.label;
+
+
+
