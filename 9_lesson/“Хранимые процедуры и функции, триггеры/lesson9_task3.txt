@@ -1,0 +1,37 @@
+(по желанию) Напишите хранимую функцию для вычисления произвольного числа Фибоначчи. 
+Числами Фибоначчи называется последовательность в которой число равно сумме двух предыдущих чисел. 
+Вызов функции FIBONACCI(10) должен возвращать число 55.
+
+
+DELIMITER //
+DROP FUNCTION IF EXISTS FIBONACCI//
+CREATE FUNCTION FIBONACCI(value INT)
+RETURNS INT DETERMINISTIC
+BEGIN
+DECLARE a, b, c, i INT;
+-- RETURN @a;
+SET a = 0;
+SET b = 1;
+SET c = 0;
+SET i = 1;
+IF(value = '0')  THEN
+	RETURN '0';
+ELSEIF (value = '1') THEN
+	RETURN '1';
+ELSE
+
+	WHILE i < value DO
+		SET i = i + 1;
+		SET c = a + b;
+		SET a = b;
+		SET b = c;
+	END WHILE;
+
+
+END IF;
+RETURN c;
+END//
+
+SELECT FIBONACCI(10)//
+
+DELIMITER ;
