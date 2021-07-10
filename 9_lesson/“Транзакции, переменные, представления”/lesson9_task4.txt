@@ -1,0 +1,27 @@
+(по желанию) Пусть имеется любая таблица с календарным полем created_at. 
+Создайте запрос, который удаляет устаревшие записи из таблицы, 
+оставляя только 5 самых свежих записей.
+
+SELECT 
+	id,
+	created_at,
+	(SELECT TIMESTAMPDIFF(DAY, created_at, NOW())) AS diff
+FROM temp
+ORDER BY diff
+LIMIT 5, 100000;
+
+
+START TRANSACTION;
+
+DELETE FROM temp
+WHERE id IN (SELECT 
+	id,
+	created_at,
+	(SELECT TIMESTAMPDIFF(DAY, created_at, NOW())) AS diff
+FROM temp
+ORDER BY diff
+LIMIT 5, 100000)
+
+SQL Error [1235] [42000]: This version of MySQL doesn't yet support 'LIMIT & IN/ALL/ANY/SOME subquery'
+
+COMMIT ;

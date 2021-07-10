@@ -1,0 +1,34 @@
+Создайте представление, которое выводит название name товарной позиции из таблицы products и соответствующее название каталога name из таблицы catalogs.
+
+SELECT * FROM products;
+SELECT * FROM catalogs;
+
+SELECT 
+p.id, p.name, p.description, p.price, c.name, p.created_at, p.updated_at 
+FROM 
+products AS p 
+JOIN
+catalogs AS c
+ON
+p.catalog_id = c.id; 
+
+CREATE OR REPLACE VIEW prod AS
+SELECT 
+p.id, p.name, p.description, p.price, c.name AS c_name, p.created_at, p.updated_at 
+FROM 
+products AS p 
+JOIN
+catalogs AS c
+ON
+p.catalog_id = c.id;
+
+SELECT * FROM prod;
+
+
+1	Intel Core i3-8100	Процессор для настольных персональных компьютеров, основанных на платформе Intel.	7890.00		Процессоры		2021-07-03 16:02:01	2021-07-03 16:02:01
+2	Intel Core i5-7400	Процессор для настольных персональных компьютеров, основанных на платформе Intel.	12700.00	Процессоры		2021-07-03 16:02:01	2021-07-03 16:02:01
+3	AMD FX-8320E		Процессор для настольных персональных компьютеров, основанных на платформе AMD.		4780.00		Процессоры		2021-07-03 16:02:01	2021-07-03 16:02:01
+4	AMD FX-8320		Процессор для настольных персональных компьютеров, основанных на платформе AMD.		7120.00		Процессоры		2021-07-03 16:02:01	2021-07-03 16:02:01
+5	ASUS ROG MAXIMUS X HERO	Материнская плата ASUS ROG MAXIMUS X HERO, Z370, Socket 1151-V2, DDR4, ATX		19310.00	Материнские платы	2021-07-03 16:02:01	2021-07-03 16:02:01
+6	Gigabyte H310M S2H	Материнская плата Gigabyte H310M S2H, H310, Socket 1151-V2, DDR4, mATX			4790.00		Материнские платы	2021-07-03 16:02:01	2021-07-03 16:02:01
+7	MSI B250M GAMING PRO	Материнская плата MSI B250M GAMING PRO, B250, Socket 1151, DDR4, mATX			5060.00	М	атеринские платы	2021-07-03 16:02:01	2021-07-03 16:02:01
