@@ -1,0 +1,17 @@
+Проанализировать, какие запросы могут выполняться наиболее часто в процессе работы приложения и 
+добавить необходимые индексы.
+
+SHOW INDEXES FROM users_media;
+
+Таким образом прошолся по всем таблицам БД и не нашел какие индексы еще можно создать((
+Все важное закреплено за ключами и не требует дополнительных индексов.
+(Хотя самое наивероятное что я плохо знаю социальные сети и что там важно)
+Поэтому продублировал составной индекс.
+
+CREATE INDEX messages_from_user_id_to_user_id_idx ON messages (from_user_id, to_user_id);
+SHOW INDEXES FROM messages;
+
+messages	0	PRIMARY					1	id
+messages	1	messages_to_user_id_fk			1	to_user_id
+messages	1	messages_from_user_id_to_user_id_idx	1	from_user_id
+messages	1	messages_from_user_id_to_user_id_idx	2	to_user_id
