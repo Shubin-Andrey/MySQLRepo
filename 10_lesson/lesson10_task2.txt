@@ -1,0 +1,43 @@
+ Задание на оконные функции
+Построить запрос, который будет выводить следующие столбцы:
+* имя группы
+* среднее количество пользователей в группах
+* самый молодой пользователь в группе
+* самый старший пользователь в группе
+* общее количество пользователей в группе
+* всего пользователей в системе
+* отношение в процентах (общее количество пользователей в группе / всего пользователей в системе) * 100
+
+
+SELECT DISTINCT communities.name,
+COUNT(communities.id) OVER() / COUNT(communities_users.user_id) OVER() AS 'AVG1',
+MAX(profiles.birthday) OVER(PARTITION BY communities.name) AS 'yong',
+MIN(profiles.birthday) OVER(PARTITION BY communities.name) AS 'old', 
+COUNT(communities_users.user_id) OVER(PARTITION BY communities.name) AS 'count',
+(SELECT COUNT(id) FROM users) AS 'users', -- захотелось вложенный запрос сделать
+COUNT(communities_users.user_id) OVER(PARTITION BY communities.name) / (SELECT COUNT(id) FROM users) * 100 AS '%'
+FROM communities 
+JOIN communities_users
+ON communities.id = communities_users.community_id
+JOIN users
+ON communities_users.user_id = users.id 
+JOIN profiles
+ON profiles.user_id = users.id
+ORDER BY name;  
+
+
+a		1.0000	2008-09-07	1973-10-04	4	100	4.0000
+ad		1.0000	2016-01-18	1970-09-19	5	100	5.0000
+commodi		1.0000	2020-03-07	1984-10-12	3	100	3.0000
+consectetur	1.0000	2013-06-03	1977-10-08	4	100	4.0000
+consequatur	1.0000	2018-01-23	2018-01-23	1	100	1.0000
+cumque		1.0000	2013-12-13	1972-03-09	4	100	4.0000
+debitis		1.0000	2015-02-14	1983-03-21	3	100	3.0000
+doloribus	1.0000	1990-02-09	1990-02-09	1	100	1.0000
+eius		1.0000	2003-04-10	1973-11-30	4	100	4.0000
+et		1.0000	2015-12-06	1975-08-30	6	100	6.0000
+excepturi	1.0000	2007-04-16	1997-11-11	2	100	2.0000
+fuga		1.0000	2008-09-07	1980-04-06	5	100	5.0000
+illo		1.0000	2007-04-16	1970-07-12	5	100	5.0000
+in		1.0000	2012-01-09	1971-12-01	5	100	5.0000
+modi		1.0000	2011-02-26	1970-09-26	5	100	5.0000
