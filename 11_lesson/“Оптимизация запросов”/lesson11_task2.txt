@@ -1,0 +1,48 @@
+(по желанию) Создайте SQL-запрос, который помещает в таблицу users миллион записей.
+
+SELECT * FROM users;
+
+Последующие 2 строчки нашел в интернете и нагло скомуниздил с небольшой доработкой
+
+SELECT substring('ABCDEFGHIJKLMNOPQRSTUVWXYZ', rand(@seed:=round(rand(@lid)*4294967296))*36+1, 1);
+
+SELECT FROM_UNIXTIME(ROUND((RAND() * (UNIX_TIMESTAMP('2020-08-11')-UNIX_TIMESTAMP('2018-01-01')))+UNIX_TIMESTAMP('2018-01-01')));
+
+
+DROP PROCEDURE IF EXISTS dowhile; 
+DELIMITER //
+CREATE PROCEDURE dowhile()
+BEGIN
+  DECLARE v, k INT DEFAULT 0;
+  DECLARE r VARCHAR(255) DEFAULT '';
+  WHILE v < 1000000 DO
+  		WHILE r = '' DO
+  			SET r = substring('ABCDEFGHIJKLMNOPQRSTUVWXYZ', rand(@seed:=round(rand(k)*4294967296))*36+1, 5);
+  			SET k = k + v;
+  		END WHILE;
+    INSERT INTO users (name, birthday_at) VALUES (r , FROM_UNIXTIME(ROUND((RAND() * (UNIX_TIMESTAMP('2020-08-11')-UNIX_TIMESTAMP('2018-01-01')))+UNIX_TIMESTAMP('2018-01-01'))));
+    SET v = v + 1;
+    SET r = '';
+  END WHILE;
+END//
+DELIMITER ;
+
+CALL dowhile();
+
+SELECT * FROM users;
+
+
+89	QRSTU	2019-12-31	2021-07-12 20:17:31	2021-07-12 20:17:31
+90	STUVW	2019-09-24	2021-07-12 20:17:31	2021-07-12 20:17:31
+91	KLMNO	2018-01-15	2021-07-12 20:17:31	2021-07-12 20:17:31
+92	LMNOP	2018-03-25	2021-07-12 20:17:31	2021-07-12 20:17:31
+93	VWXYZ	2019-01-09	2021-07-12 20:17:31	2021-07-12 20:17:31
+94	EFGHI	2019-10-29	2021-07-12 20:17:31	2021-07-12 20:17:31
+95	CDEFG	2018-11-01	2021-07-12 20:17:31	2021-07-12 20:17:31
+96	DEFGH	2019-04-21	2021-07-12 20:17:31	2021-07-12 20:17:31
+
+
+
+И оставил на ночь + время пока был на работе(так же не знаю во сколько жена лавочку прикрыла). 
+
+
